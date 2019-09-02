@@ -56,6 +56,11 @@ struct png_file_context {
 
 typedef struct png_file_context png_file_context_t;
 
+static switch_status_t pnb_file_exists(switch_file_handle_t *handle)
+{
+	return switch_file_exists(handle->file_path, handle->pool);
+}
+
 static switch_status_t png_file_open(switch_file_handle_t *handle, const char *path)
 {
 	png_file_context_t *context;
@@ -440,6 +445,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_png_load)
 	file_interface = (switch_file_interface_t *)switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = supported_formats;
+	file_interface->file_exists = png_file_exists;
 	file_interface->file_open = png_file_open;
 	file_interface->file_close = png_file_close;
 	file_interface->file_read = png_file_read;

@@ -278,6 +278,11 @@ static int flush_video_queue(switch_queue_t *q, int min)
 	return switch_queue_size(q);
 }
 
+static switch_status_t mp4_file_exists(switch_file_handle_t *handle)
+{
+	return switch_file_exists(handle->file_path, handle->pool);
+}
+
 static switch_status_t mp4_file_open(switch_file_handle_t *handle, const char *path)
 {
 	mp4_file_context_t *context;
@@ -745,6 +750,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_mp4v2_load)
 	file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = supported_formats;
+	file_interface->file_exists = mp4_file_exists;
 	file_interface->file_open = mp4_file_open;
 	file_interface->file_close = mp4_file_close;
 	file_interface->file_truncate = mp4_file_truncate;

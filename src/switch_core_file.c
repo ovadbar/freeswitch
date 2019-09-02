@@ -62,6 +62,107 @@ static switch_status_t get_file_size(switch_file_handle_t *fh, const char **stri
 	return status;
 }
 
+/*
+SWITCH_DECLARE(switch_status_t) switch_core_file_exists( const char *file_path, switch_memory_pool_t *pool)
+{
+	char *ext;
+    switch_status_t status = SWITCH_STATUS_FALSE;
+    char stream_name[128] = "";
+    char *rhs = NULL;
+    const char *spool_path = NULL;
+    char *fp = NULL;
+    switch_file_handle_t fh = { 0 };
+
+    if (zstr(file_path)) {
+		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Invalid Filename\n");
+		return SWITCH_STATUS_FALSE;
+    }
+    if (pool) {
+		fh->memory_pool = pool;
+    } else {
+		if ((status = switch_core_new_memory_pool(&fh->memory_pool)) != SWITCH_STATUS_SUCCESS) {
+			UNPROTECT_INTERFACE(fh->file_interface);
+			return status;
+		}
+		switch_set_flag(fh, SWITCH_FILE_FLAG_FREE_POOL);
+	}
+	switch_set_flag(fh, SWITCH_FILE_FLAG_FREE_POOL);
+ 
+	if (*file_path == '{') {
+		char *timeout;
+		char *modname;
+		const char *val;
+		int tmp;
+ 
+		fp = switch_core_strdup(fh->memory_pool, file_path);
+ 
+		while (*fp == '{') {
+			char *parsed = NULL;
+ 
+			if (switch_event_create_brackets(fp, '{', '}', ',', &fh->params, &parsed, SWITCH_FA
+				switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Parse Error!\n");
+				goto fail;
+			}
+ 
+			fp = parsed;
+		}
+ 
+		file_path = fp;
+ 
+		if ((modname = switch_event_get_header(fh->params, "modname"))) {
+			fh->modname = switch_core_strdup(fh->memory_pool, modname);
+		}
+	}
+ 
+	if (switch_directory_exists(file_path, fh->memory_pool) == SWITCH_STATUS_SUCCESS) {
+		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "File [%s] is a directory not a file.\n", file_path);`
+		status = SWITCH_STATUS_GENERR;
+		goto fail;
+	}
+ 
+	if ((rhs = strstr(file_path, SWITCH_URL_SEPARATOR))) {
+		switch_copy_string(stream_name, file_path, (rhs + 1) - file_path);
+		ext = stream_name;
+		file_path = rhs + 3;
+		fh->stream_name = switch_core_strdup(fh->memory_pool, stream_name);
+		fh->file_path = switch_core_strdup(fh->memory_pool, file_path);
+	} else {
+		if ((ext = strrchr(file_path, '.')) == 0) {
+			switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Unknown file Format [%s]\n", file_path);
+			switch_goto_status(SWITCH_STATUS_FALSE, fail);
+		}
+		ext++;
+		fh->file_path = switch_core_strdup(fh->memory_pool, file_path);
+	}
+	if ((fh->file_interface = switch_loadable_module_get_file_interface(ext, fh->modname)) == 0) {
+		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Invalid file format [%s] for [%s]!\n", ext, file_path);
+		switch_goto_status(SWITCH_STATUS_GENERR, fail);
+	}
+ 
+	fh->file = file;
+	if (spool_path) {
+		char uuid_str[SWITCH_UUID_FORMATTED_LENGTH + 1];
+		switch_uuid_t uuid;
+		switch_uuid_get(&uuid);
+		switch_uuid_format(uuid_str, &uuid);
+ 
+		fh->spool_path = switch_core_sprintf(fh->memory_pool, "%s%s%s.%s", spool_path, SWITCH_PATH_SEPARATOR, uuid_str, ext);
+	} else {
+		fh->spool_path = NULL;
+	}
+ 
+	file_path = fh->spool_path ? fh->spool_path : fh->file_path;
+ 
+	if ((status = fh->file_interface->file_exists(fh, file_path)) != SWITCH_STATUS_SUCCESS) {
+		if (fh->spool_path) {
+			switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_WARNING, "Spool dir is set.  Make sure [%s] is also a valid path\n", fh->spool_path);
+		}
+		UNPROTECT_INTERFACE(fh->file_interface);
+	}
+	return status;
+}
+*/
+
 SWITCH_DECLARE(switch_status_t) switch_core_perform_file_open(const char *file, const char *func, int line,
 															  switch_file_handle_t *fh,
 															  const char *file_path,

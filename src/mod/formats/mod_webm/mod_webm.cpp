@@ -78,6 +78,11 @@ struct webm_file_context {
 
 typedef struct webm_file_context webm_file_context_t;
 
+static switch_status_t webm_file_exists(switch_file_handle_t *handle)
+{
+	return switch_file_exists(handle->file_path, handle->pool);
+}
+
 static switch_status_t webm_file_open(switch_file_handle_t *handle, const char *path)
 {
 	webm_file_context_t *context;
@@ -492,6 +497,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_webm_load)
 	file_interface = (switch_file_interface_t *)switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = supported_formats;
+	file_interface->file_exists = webm_file_exists;
 	file_interface->file_open = webm_file_open;
 	file_interface->file_close = webm_file_close;
 	file_interface->file_truncate = webm_file_truncate;

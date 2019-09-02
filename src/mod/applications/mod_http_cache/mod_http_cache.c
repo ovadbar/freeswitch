@@ -1703,6 +1703,19 @@ struct http_context {
 };
 
 /**
+ * Check to see if file exists
+ * @param handle
+ * @return SWITCH_STATUS_SUCCESS if exists
+ */
+static switch_status_t file_exists(switch_file_handle_t *handle)
+{
+	if (!context->private_info->local_path) {
+		return SWITCH_STATUS_FALSE;
+	}
+	return SWITCH_STATUS_SUCCESS;
+}
+
+/**
  * Open URL
  * @param handle
  * @param path the URL
@@ -1913,6 +1926,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_http_cache_load)
 	file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = http_cache_supported_formats;
+	file_interface->file_exists = file_exists;
 	file_interface->file_open = http_cache_file_open;
 	file_interface->file_close = http_file_close;
 	file_interface->file_read = http_file_read;
@@ -1925,6 +1939,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_http_cache_load)
 		file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 		file_interface->interface_name = modname;
 		file_interface->extens = http_supported_formats;
+        file_interface->file_exists = file_exists;
 		file_interface->file_open = http_file_open;
 		file_interface->file_close = http_file_close;
 		file_interface->file_read = http_file_read;
@@ -1936,6 +1951,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_http_cache_load)
 		file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 		file_interface->interface_name = modname;
 		file_interface->extens = https_supported_formats;
+        file_interface->file_exists = file_exists;
 		file_interface->file_open = https_file_open;
 		file_interface->file_close = http_file_close;
 		file_interface->file_read = http_file_read;

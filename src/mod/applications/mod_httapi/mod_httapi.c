@@ -2875,6 +2875,11 @@ static switch_status_t http_file_file_seek(switch_file_handle_t *handle, unsigne
 	return switch_core_file_seek(&context->fh, cur_sample, samples, whence);
 }
 
+static switch_status_t file_exists(switch_file_handle_t *handle)
+{
+	return locate_url_file(handle->private_info, handle->private_info->dest_url);
+}
+
 static switch_status_t file_open(switch_file_handle_t *handle, const char *path, int is_https)
 {
 	http_file_context_t *context;
@@ -3153,6 +3158,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_httapi_load)
 	http_file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	http_file_interface->interface_name = modname;
 	http_file_interface->extens = http_file_supported_formats;
+	http_file_interface->file_exists = file_exists;
 	http_file_interface->file_open = http_file_file_open;
 	http_file_interface->file_close = http_file_file_close;
 	http_file_interface->file_read = http_file_file_read;
@@ -3167,6 +3173,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_httapi_load)
 	https_file_interface->interface_name = modname;
 	https_file_interface->extens = https_file_supported_formats;
 	https_file_interface->file_open = https_file_file_open;
+	https_file_interface->file_exists = file_exists;
 	https_file_interface->file_close = http_file_file_close;
 	https_file_interface->file_read = http_file_file_read;
 	https_file_interface->file_write = http_file_write;

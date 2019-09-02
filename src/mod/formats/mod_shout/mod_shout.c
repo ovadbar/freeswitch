@@ -1741,6 +1741,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_shout_load)
 	file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = supported_formats;
+	file_interface->file_exists = shout_file_exists;
 	file_interface->file_open = shout_file_open;
 	file_interface->file_close = shout_file_close;
 	file_interface->file_read = shout_file_read;

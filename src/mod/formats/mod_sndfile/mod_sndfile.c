@@ -56,6 +56,11 @@ typedef struct sndfile_context sndfile_context;
 
 static switch_status_t sndfile_perform_open(sndfile_context *context, const char *path, int mode, switch_file_handle_t *handle);
 
+static switch_status_t sndfile_file_exists(switch_file_handle_t *handle)
+{
+	return switch_file_exists(handle->file_path, handle->pool);
+}
+
 static switch_status_t sndfile_file_open(switch_file_handle_t *handle, const char *path)
 {
 	sndfile_context *context;
@@ -493,6 +498,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_sndfile_load)
 	file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = supported_formats;
+	file_interface->file_exists = sndfile_file_exists;
 	file_interface->file_open = sndfile_file_open;
 	file_interface->file_close = sndfile_file_close;
 	file_interface->file_truncate = sndfile_file_truncate;

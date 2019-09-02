@@ -753,6 +753,11 @@ static switch_status_t vlc_file_av_open(switch_file_handle_t *handle, const char
 	return SWITCH_STATUS_SUCCESS;
 }
 
+static switch_status_t vlc_file_exists(switch_file_handle_t *handle)
+{
+	return switch_file_exists(handle->file_path, handle->pool);
+}
+
 static switch_status_t vlc_file_open(switch_file_handle_t *handle, const char *path)
 {
 	vlc_file_context_t *context;
@@ -2624,6 +2629,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_vlc_load)
 	file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = vlc_file_supported_formats;
+	file_interface->file_exists = vlc_file_exists;
 	file_interface->file_open = vlc_file_open;
 	file_interface->file_close = vlc_file_close;
 	file_interface->file_command = vlc_file_command;

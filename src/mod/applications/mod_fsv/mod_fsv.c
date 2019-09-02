@@ -790,6 +790,11 @@ struct fsv_file_context {
 
 typedef struct fsv_file_context fsv_file_context;
 
+static switch_status_t fsv_file_exists(switch_file_handle_t *handle)
+{
+	return switch_file_exists(handle->file_path, handle->pool);
+}
+
 static switch_status_t fsv_file_open(switch_file_handle_t *handle, const char *path)
 {
 	fsv_file_context *context;
@@ -1067,6 +1072,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_fsv_load)
 	file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = supported_formats;
+	file_interface->file_exists = fsv_file_exists;
 	file_interface->file_open = fsv_file_open;
 	file_interface->file_close = fsv_file_close;
 	file_interface->file_truncate = fsv_file_truncate;

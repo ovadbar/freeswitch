@@ -166,6 +166,11 @@ static switch_status_t switch_opusfile_decode(opus_file_context *context, void *
 }
 
 
+static switch_status_t switch_opusfile_exists(switch_file_handle_t *handle)
+{
+	return switch_file_exists(handle->file_path, handle->pool);
+}
+
 static switch_status_t switch_opusfile_open(switch_file_handle_t *handle, const char *path)
 {
 	opus_file_context *context;
@@ -505,6 +510,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_opusfile_load)
 	file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = supported_formats;
+	file_interface->file_exists = switch_opusfile_exists;
 	file_interface->file_open = switch_opusfile_open;
 	file_interface->file_close = switch_opusfile_close;
 	file_interface->file_read = switch_opusfile_read;

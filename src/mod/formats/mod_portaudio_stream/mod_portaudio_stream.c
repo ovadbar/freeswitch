@@ -360,6 +360,10 @@ static void *SWITCH_THREAD_FUNC read_stream_thread(switch_thread_t *thread, void
 	return NULL;
 }
 
+static switch_status_t portaudio_stream_file_exists(switch_file_handle_t *handle)
+{
+	return switch_file_exists(handle->file_path, handle->pool);
+}
 
 static switch_status_t portaudio_stream_file_open(switch_file_handle_t *handle, const char *path)
 {
@@ -570,6 +574,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_portaudio_stream_load)
 	file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = supported_formats;
+	file_interface->file_exists = portaudio_stream_file_exists;
 	file_interface->file_open = portaudio_stream_file_open;
 	file_interface->file_close = portaudio_stream_file_close;
 	file_interface->file_read = portaudio_stream_file_read;

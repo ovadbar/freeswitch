@@ -285,6 +285,8 @@ struct switch_file_interface {
 	switch_status_t (*file_close) (switch_file_handle_t *);
 	/*! function to close the file */
 	switch_status_t (*file_truncate) (switch_file_handle_t *, int64_t offset);
+	/*! function to check for file */
+	switch_status_t (*file_exists) (switch_file_handle_t *);
 	/*! function to read from the file */
 	switch_status_t (*file_read) (switch_file_handle_t *, void *data, switch_size_t *len);
 	/*! function to write from the file */

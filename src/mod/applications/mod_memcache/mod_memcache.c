@@ -444,6 +444,14 @@ SWITCH_STANDARD_API(memcache_function)
 }
 
 
+static switch_status_t memcache_file_open(switch_file_handle_t *handle)
+{
+	if (handle->private_info->ok == 1) {
+		return SWITCH_STATUS_SUCCESS;
+	}
+	return SWITCH_STATUS_FALSE;
+}
+
 static switch_status_t memcache_file_open(switch_file_handle_t *handle, const char *path)
 {
 	memcache_context_t *context;
@@ -605,6 +613,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_memcache_load)
 	file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens         = supported_formats;
+	file_interface->file_exists    = memcache_file_exists;
 	file_interface->file_open      = memcache_file_open;
 	file_interface->file_close     = memcache_file_close;
 	file_interface->file_read      = memcache_file_read;

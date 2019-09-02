@@ -799,6 +799,14 @@ static int cdata_hook(void *user_data, char *data, size_t len)
 }
 
 /**
+ * Check to see if file exists
+ */
+static switch_status_t ssml_file_exists(switch_file_handle_t *handle)
+{
+	return switch_file_exists(handle->file_path, handle->pool);
+}
+
+/**
  * Transforms SSML into file_string format and opens file_string.
  * @param handle
  * @param path the inline SSML
@@ -1173,6 +1181,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_ssml_load)
 	file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = ssml_supported_formats;
+	file_interface->file_exists = ssml_file_exists;
 	file_interface->file_open = ssml_file_open;
 	file_interface->file_close = ssml_file_close;
 	file_interface->file_read = ssml_file_read;
@@ -1181,6 +1190,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_ssml_load)
 	file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = tts_supported_formats;
+	file_interface->file_exists = tts_file_exists;
 	file_interface->file_open = tts_file_open;
 	file_interface->file_close = tts_file_close;
 	file_interface->file_read = tts_file_read;

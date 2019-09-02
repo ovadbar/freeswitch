@@ -121,6 +121,11 @@ static int teletone_handler(teletone_generation_session_t *ts, teletone_tone_map
 	return 0;
 }
 
+static switch_status_t tone_stream_file_exists(switch_file_handle_t *handle)
+{
+	return switch_file_exists(handle->file_path, handle->pool);
+}
+
 static switch_status_t tone_stream_file_open(switch_file_handle_t *handle, const char *path)
 {
 	switch_buffer_t *audio_buffer = NULL;
@@ -224,6 +229,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_tone_stream_load)
 	file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = supported_formats;
+	file_interface->file_exists = tone_stream_file_exists;
 	file_interface->file_open = tone_stream_file_open;
 	file_interface->file_close = tone_stream_file_close;
 	file_interface->file_read = tone_stream_file_read;
@@ -231,6 +237,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_tone_stream_load)
 	file_interface = switch_loadable_module_create_interface(*module_interface, SWITCH_FILE_INTERFACE);
 	file_interface->interface_name = modname;
 	file_interface->extens = silence_supported_formats;
+	file_interface->file_exists = silence_stream_file_exists;
 	file_interface->file_open = silence_stream_file_open;
 	file_interface->file_close = silence_stream_file_close;
 	file_interface->file_read = silence_stream_file_read;

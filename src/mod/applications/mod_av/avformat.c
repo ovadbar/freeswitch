@@ -1580,6 +1580,11 @@ GCC_DIAG_ON(deprecated-declarations)
 	return NULL;
 }
 
+static switch_status_t av_file_exists(switch_file_handle_t *handle)
+{
+	return switch_file_exists(handle->file_path, handle->pool);
+}
+
 static switch_status_t av_file_open(switch_file_handle_t *handle, const char *path)
 {
 	av_file_context_t *context = NULL;
@@ -2712,6 +2717,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_avformat_load)
 	file_interface->interface_name = modname;
 	file_interface->extens = supported_formats;
 	file_interface->file_open = av_file_open;
+	file_interface->file_exists = av_file_exists;
 	file_interface->file_close = av_file_close;
 	file_interface->file_truncate = av_file_truncate;
 	file_interface->file_read = av_file_read;
