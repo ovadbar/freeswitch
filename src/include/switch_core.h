@@ -1879,9 +1879,7 @@ SWITCH_DECLARE(void) switch_core_db_test_reactive(switch_core_db_t *db, char *te
   \return SWITCH_STATUS_SUCCESS if the file is opened
   \note the loadable module used is chosen based on the file extension
 */
-/*!
 SWITCH_DECLARE(switch_status_t) switch_core_file_exists(const char *file_path, switch_memory_pool_t *pool);
-*/
 
 SWITCH_DECLARE(switch_status_t) switch_core_perform_file_open(const char *file, const char *func, int line,
 															  _In_ switch_file_handle_t *fh,
