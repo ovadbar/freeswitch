@@ -1871,6 +1871,18 @@ SWITCH_DECLARE(void) switch_core_db_test_reactive(switch_core_db_t *db, char *te
 ///\ingroup core1
 ///\{
 
+/*!
+  \brief Open a media file using file format modules
+  \param _fh a file handle to use
+  \param _file_path the path to the file
+  \param _pool the pool to use (NULL for new pool)
+  \return SWITCH_STATUS_SUCCESS if the file is opened
+  \note the loadable module used is chosen based on the file extension
+*/
+/*!
+SWITCH_DECLARE(switch_status_t) switch_core_file_exists(const char *file_path, switch_memory_pool_t *pool);
+*/
+
 SWITCH_DECLARE(switch_status_t) switch_core_perform_file_open(const char *file, const char *func, int line,
 															  _In_ switch_file_handle_t *fh,
 															  _In_opt_z_ const char *file_path,

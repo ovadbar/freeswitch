@@ -62,6 +62,27 @@ static switch_status_t get_file_size(switch_file_handle_t *fh, const char **stri
 	return status;
 }
 
+SWITCH_DECLARE(switch_status_t) switch_core_file_exists( const char *file_path, switch_memory_pool_t *pool)
+{
+    switch_status_t status = SWITCH_STATUS_FALSE;
+    if (zstr(file_path)) {
+		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Invalid Filename\n");
+		return SWITCH_STATUS_FALSE;
+    }
+    if (! pool) {
+		if ((status = switch_core_new_memory_pool(&pool)) != SWITCH_STATUS_SUCCESS) {
+			return status;
+		}
+	}
+	if (switch_file_exists(file_path, pool) == SWITCH_STATUS_SUCCESS) {
+		return SWITCH_STATUS_SUCCESS;
+	}
+    if(! strncmp(fild_path, "http", 4)){ 
+		return SWITCH_STATUS_SUCCESS;
+	}
+	return status;
+}
+
 SWITCH_DECLARE(switch_status_t) switch_core_perform_file_open(const char *file, const char *func, int line,
 															  switch_file_handle_t *fh,
 															  const char *file_path,
