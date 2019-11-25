@@ -1229,9 +1229,7 @@ static switch_status_t create_file(switch_core_session_t *session, vm_profile_t 
 
 		unlink(file_path);
 
-		switch_ivr_record_file(session, &fh, file_path, &args, profile->max_record_len);
-
-		if (switch_core_file_exists(file_path, switch_core_session_get_pool(session)) == SWITCH_STATUS_SUCCESS) {
+		if (switch_ivr_record_file(session, &fh, file_path, &args, profile->max_record_len) == SWITCH_STATUS_SUCCESS) {
 			got_file = 1;
 		}
 
