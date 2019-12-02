@@ -66,7 +66,6 @@ SWITCH_DECLARE(switch_status_t) switch_core_file_exists( const char *file_path, 
 {
 	switch_status_t status = SWITCH_STATUS_FALSE;
 	if (zstr(file_path)) {
-		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Invalid Filename\n");
 		return SWITCH_STATUS_FALSE;
 	}
 	if (! pool) {
