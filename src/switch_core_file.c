@@ -77,10 +77,50 @@ SWITCH_DECLARE(switch_status_t) switch_core_file_exists( const char *file_path, 
 	if (switch_file_exists(file_path, pool) == SWITCH_STATUS_SUCCESS) {
 		return SWITCH_STATUS_SUCCESS;
 	}
-	if(! strncmp(file_path, "http", 4)){ 
+        if ((strstr(file_path, SWITCH_URL_SEPARATOR))) {
 		return SWITCH_STATUS_SUCCESS;
 	}
 	return status;
+}
+
+SWITCH_DECLARE(switch_status_t) switch_core_file_remove( const char *file_path, switch_memory_pool_t *pool)
+{
+	char stream_name[128] = "";
+	char *rhs = NULL;
+	char *ext;
+	if (zstr(file_path)) {
+		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Invalid Filename\n");
+		return SWITCH_STATUS_FALSE;
+	}
+	if (! pool) {
+		if (switch_core_new_memory_pool(&pool) != SWITCH_STATUS_SUCCESS) {
+			switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Error creating \n");
+			return SWITCH_STATUS_FALSE;
+		}
+	}
+	if ((rhs = strstr(file_path, SWITCH_URL_SEPARATOR))) {
+		char *modname = NULL;
+		switch_file_interface_t *file_interface;
+		switch_copy_string(stream_name, file_path, (rhs + 1) - file_path);
+		ext = stream_name;
+		file_path = rhs + 3;
+		if ((file_interface = switch_loadable_module_get_file_interface(ext, modname)) == 0) {
+			switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Unknown remote format [%s] for [%s]!\n", ext, file_path);
+			return SWITCH_STATUS_FALSE;
+		}
+		else {
+			switch_file_handle_t *fh = { 0 };
+			switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "Attempting delete using [%s] for [%s]!\n", ext, file_path);
+			return file_interface->file_delete(fh, file_path);
+		}
+	} else if (switch_file_exists(file_path, pool) == SWITCH_STATUS_SUCCESS) {
+		if (unlink(file_path) != 0) {
+			return SWITCH_STATUS_SUCCESS;
+		}
+		return SWITCH_STATUS_FALSE;
+	}
+
+	return SWITCH_STATUS_FALSE;
 }
 
 SWITCH_DECLARE(switch_status_t) switch_core_perform_file_open(const char *file, const char *func, int line,
