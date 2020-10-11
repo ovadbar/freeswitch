@@ -106,7 +106,7 @@ static struct mwi_reason_table MWI_REASON_CHART[] = {
 	{NULL, 0}
 };
 
-#define VM_PROFILE_CONFIGITEM_COUNT 100
+#define VM_PROFILE_CONFIGITEM_COUNT 101
 
 struct vm_profile {
 	char *name;
@@ -182,6 +182,7 @@ struct vm_profile {
 	switch_bool_t db_password_override;
 	switch_bool_t allow_empty_password_auth;
 	switch_bool_t send_full_vm_header;
+	switch_bool_t keep_deleted;
 	switch_thread_rwlock_t *rwlock;
 	switch_memory_pool_t *pool;
 	uint32_t flags;
@@ -691,6 +692,7 @@ vm_profile_t *profile_set_config(vm_profile_t *profile)
 						   &profile->allow_empty_password_auth, SWITCH_TRUE, NULL, NULL, NULL);
 	SWITCH_CONFIG_SET_ITEM(profile->config[i++], "auto-playback-recordings", SWITCH_CONFIG_BOOL, CONFIG_RELOADABLE, &profile->auto_playback_recordings, SWITCH_FALSE, NULL, NULL, NULL);
 	SWITCH_CONFIG_SET_ITEM(profile->config[i++], "send-full-vm-header", SWITCH_CONFIG_BOOL, CONFIG_RELOADABLE, &profile->send_full_vm_header, SWITCH_FALSE, NULL, NULL, NULL);
+	SWITCH_CONFIG_SET_ITEM(profile->config[i++], "keep_deleted", SWITCH_CONFIG_BOOL, CONFIG_RELOADABLE, &profile->keep_deleted, SWITCH_FALSE, NULL, NULL, NULL);
 
 	switch_assert(i < VM_PROFILE_CONFIGITEM_COUNT);
 
@@ -2169,7 +2171,9 @@ static void voicemail_check_main(switch_core_session_t *session, vm_profile_t *p
 				vm_execute_sql(profile, sql, profile->mutex);
 				switch_snprintfv(sql, sizeof(sql), "select file_path from voicemail_msgs where username='%q' and domain='%q' and flags='delete'", myid,
 								domain_name);
-				vm_execute_sql_callback(profile, profile->mutex, sql, unlink_callback, NULL);
+				if (! profile->keep_deleted) {
+					vm_execute_sql_callback(profile, profile->mutex, sql, unlink_callback, NULL);
+				}
 				switch_snprintfv(sql, sizeof(sql), "delete from voicemail_msgs where username='%q' and domain='%q' and flags='delete'", myid, domain_name);
 				vm_execute_sql(profile, sql, profile->mutex);
 				vm_check_state = VM_CHECK_FOLDER_SUMMARY;
