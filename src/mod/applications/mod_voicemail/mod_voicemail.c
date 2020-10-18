@@ -339,17 +339,10 @@ static char vm_pref_sql[] =
 	"   name_path       VARCHAR(255),\n" "   greeting_path   VARCHAR(255),\n" "   password        VARCHAR(255)\n" ");\n";
 
 static char *vm_index_list[] = {
-	"create index voicemail_msgs_idx1 on voicemail_msgs(created_epoch)",
-	"create index voicemail_msgs_idx2 on voicemail_msgs(username)",
-	"create index voicemail_msgs_idx3 on voicemail_msgs(domain)",
-	"create index voicemail_msgs_idx4 on voicemail_msgs(uuid)",
+	"create index voicemail_msgs_idx2 on voicemail_msgs(domain,username,read_flags,created_epoch)",
+	"create unique  index voicemail_msgs_idx4 on voicemail_msgs(uuid)",
 	"create index voicemail_msgs_idx5 on voicemail_msgs(in_folder)",
-	"create index voicemail_msgs_idx6 on voicemail_msgs(read_flags)",
-	"create index voicemail_msgs_idx7 on voicemail_msgs(forwarded_by)",
-	"create index voicemail_msgs_idx8 on voicemail_msgs(read_epoch)",
-	"create index voicemail_msgs_idx9 on voicemail_msgs(flags)",
-	"create index voicemail_prefs_idx1 on voicemail_prefs(username)",
-	"create index voicemail_prefs_idx2 on voicemail_prefs(domain)",
+	"create index voicemail_prefs_idx1 on voicemail_prefs(domain,username)",
 	NULL
 };
 
