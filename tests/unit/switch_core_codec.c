@@ -74,6 +74,8 @@ FST_CORE_BEGIN("./conf")
 			switch_core_codec_copy(&orig_codec, &new_codec, NULL, NULL);
 			fst_check(orig_codec.implementation->samples_per_second == new_codec.implementation->samples_per_second);
 			fst_check(orig_codec.implementation->actual_samples_per_second == new_codec.implementation->actual_samples_per_second);
+			switch_core_codec_destroy(&orig_codec);
+			switch_core_codec_destroy(&new_codec);
 
 			status = switch_core_codec_init(&orig_codec,
 			"OPUS",
@@ -88,6 +90,8 @@ FST_CORE_BEGIN("./conf")
 			switch_core_codec_copy(&orig_codec, &new_codec, NULL, NULL);
 			fst_check(orig_codec.implementation->samples_per_second == new_codec.implementation->samples_per_second);
 			fst_check(orig_codec.implementation->actual_samples_per_second == new_codec.implementation->actual_samples_per_second);
+			switch_core_codec_destroy(&orig_codec);
+			switch_core_codec_destroy(&new_codec);
 
 			status = switch_core_codec_init(&orig_codec,
 			"OPUS",
@@ -102,6 +106,8 @@ FST_CORE_BEGIN("./conf")
 			switch_core_codec_copy(&orig_codec, &new_codec, NULL, NULL);
 			fst_check(orig_codec.implementation->samples_per_second == new_codec.implementation->samples_per_second);
 			fst_check(orig_codec.implementation->actual_samples_per_second == new_codec.implementation->actual_samples_per_second);
+			switch_core_codec_destroy(&orig_codec);
+			switch_core_codec_destroy(&new_codec);
  
 			status = switch_core_codec_init(&orig_codec,
 			"G722",
@@ -116,9 +122,37 @@ FST_CORE_BEGIN("./conf")
 			switch_core_codec_copy(&orig_codec, &new_codec, NULL, NULL);
 			fst_check(orig_codec.implementation->samples_per_second == new_codec.implementation->samples_per_second);
 			fst_check(orig_codec.implementation->actual_samples_per_second == new_codec.implementation->actual_samples_per_second);
+			switch_core_codec_destroy(&orig_codec);
+			switch_core_codec_destroy(&new_codec);
 
 		}
 		FST_TEST_END()
+
+		FST_TEST_BEGIN(test_mod_opus_switch_status_false)
+		{
+			signed char outbuf[SWITCH_RECOMMENDED_BUFFER_SIZE] = { 0 };
+			uint32_t decoded_len = 0;
+			uint32_t decoded_rate = 48000;
+			unsigned int flags = 0;
+			switch_codec_t orig_codec = { 0 };
+			switch_status_t status;
+			switch_codec_settings_t codec_settings = { { 0 } };
+			status = switch_core_codec_init(&orig_codec,
+											"OPUS",
+											"mod_opus",
+											NULL,
+											48000,
+											20,
+											1, SWITCH_CODEC_FLAG_ENCODE | SWITCH_CODEC_FLAG_DECODE,
+											&codec_settings, fst_pool);
+			fst_check(status == SWITCH_STATUS_SUCCESS);
+
+			status = switch_core_codec_decode(&orig_codec, NULL, "test", 5, 48000, outbuf, &decoded_len, &decoded_rate, &flags);
+			fst_check_int_equals(status, SWITCH_STATUS_FALSE);
+			switch_core_codec_destroy(&orig_codec);
+		}
+		FST_TEST_END()
+
 	}
 	FST_SUITE_END()
 }
